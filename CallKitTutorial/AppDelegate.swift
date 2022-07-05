@@ -9,7 +9,12 @@
 import UIKit
 import SwiftUI
 import PushKit
+import linphonesw
 
+let userDefaultStr :String = "voipTest"
+let backGround :String = "backGround"
+
+var isComeFromVoip:Bool = false
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         registerForPushNotifications()
         voipRegistration()
+        Callmanager.instance()
         return true
     }
 
@@ -41,10 +47,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var stringifiedToken = deviceToken.map{String(format: "%02X", $0)}.joined()
 //        stringifiedToken.append(String(":remote"))
         print("stringifiedToken == \(stringifiedToken.localizedLowercase)")
-        tutorialContext.mCore.didRegisterForRemotePushWithStringifiedToken(deviceTokenStr: stringifiedToken)
+        Callmanager.instance().mCore.didRegisterForRemotePushWithStringifiedToken(deviceTokenStr: stringifiedToken)
         let userDefault = UserDefaults.standard
          userDefault.setValue(stringifiedToken, forKey: "pushToken")
          userDefault.synchronize()
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        
+    }
+    func applicationDidEnterBackground(_ application: UIApplication) {
+//        isComeFromVoip = false
     }
 
     func registerForPushNotifications() {
@@ -73,19 +86,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate:UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+//        UserDefaults.standard.setValue("willPresent", forKey: "willPresent")
+//                    UserDefaults.standard.synchronize()
         
         completionHandler(.alert)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
+        let userInfo = response.notification.request.content.userInfo as NSDictionary
+        UserDefaults.standard.setValue(userInfo, forKey: "NotificationuserInfo")
+                    UserDefaults.standard.synchronize()
+        
+//        UserDefaults.standard.setValue("didReceive", forKey: "didReceive")
+//                    UserDefaults.standard.synchronize()
+        
+        let callid = response.notification.request.content.userInfo["CallId"] as? String
+        if callid != nil && callid != "" {
+            
+            
+            let call = Callmanager.instance().findCall(callId: callid) as? Call ?? nil
+            
+            if call != nil {
+                tutorialContext.mCall = call
+                tutorialContext.mProviderDelegate.incomingCall()
+            }
+            
+        }
     }
 }
 
 extension AppDelegate:PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         var stringifiedToken = pushCredentials.token.map{String(format: "%02X", $0)}.joined()
-        print("stringifiedToken == \(stringifiedToken)")
+        print("stringifiedToken == voipToken ==\(stringifiedToken)")
        let userDefault = UserDefaults.standard
         userDefault.setValue(stringifiedToken, forKey: "voipToken")
         userDefault.synchronize()
@@ -93,24 +127,39 @@ extension AppDelegate:PKPushRegistryDelegate {
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
 
-        print("payload == \(payload)")
+        let userDefault = UserDefaults.standard
+         userDefault.setValue("didReceiveIncomingPushWithcompletion", forKey: "voipToken")
+         userDefault.synchronize()
+        print("payload =22= \(payload)")
         localNotification()
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType)  {
-        print("payload == \(payload)")
+        let userDefault = UserDefaults.standard
+         userDefault.setValue("didReceiveIncomingPushWith", forKey: "voipToken")
+         userDefault.synchronize()
+        print("payload =11= \(payload)")
         localNotification()
     }
     
     func localNotification() {
         // Configure the notification's payload.
-        tutorialContext.mProviderDelegate.incomingCall()
-        if (tutorialContext.loggedIn) {
+        
+        
+//        if (!Callmanager.instance().isLogin) {
+        Callmanager.instance()
+//            UserDefaults.standard.setValue("pushRegistry", forKey: "pushRegistry")
+            UserDefaults.standard.synchronize()
+            isComeFromVoip = true
             
-        } else {
-            tutorialContext.isComingFromVoip = true
-            tutorialContext.login()
-        }
+            
+            let dic = UserDefaults.standard.value(forKey: userDefaultStr) as! NSDictionary
+            Callmanager.instance().register(dic: dic)
+//        tutorialContext.mProviderDelegate.incomingCall()
+        
+//        tutorialContext.login()
+//        }
+       
         
     }
 }

@@ -90,10 +90,10 @@ extension CallKitProviderDelegate: CXProviderDelegate {
 	func providerDidReset(_ provider: CXProvider) {}
 	
 	func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-		tutorialContext.mCore.activateAudioSession(actived: true)
+        Callmanager.instance().mCore.activateAudioSession(actived: true)
 	}
 	
 	func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
-		tutorialContext.mCore.activateAudioSession(actived: false)
+        Callmanager.instance().mCore.activateAudioSession(actived: false)
 	}
 }

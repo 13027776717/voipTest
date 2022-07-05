@@ -109,7 +109,17 @@ struct ContentView: View {
 			}
 			Group {
 				Spacer()
+                HStack {
+                    Button(action: self.tutorialContext.showFlex){
+                        Text("show Debug Tool").frame(width: 180, height: 30, alignment: .center)
+                    }
+                    
+//                    Button(action: self.tutorialContext.deleteUserDefault){
+//                        Text("rest").frame(width: 80, height: 30, alignment: .center)
+//                    }
+                }
 				Text("Core Version is \(tutorialContext.coreVersion)")
+                
 			}
 		}
 		.padding()
