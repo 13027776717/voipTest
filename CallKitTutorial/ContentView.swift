@@ -71,10 +71,10 @@ struct ContentView: View {
 							}
 						})
 						{
-							Text(tutorialContext.loggedIn ? "Log out & \ndelete account" : "Create & \nlog in account")
-								.font(.largeTitle)
+							Text(tutorialContext.loggedIn ? "Log out" : "log in account")
+                                .font(.title2)
 								.foregroundColor(Color.white)
-								.frame(width: 220.0, height: 90)
+								.frame(width: 220.0, height: 40)
 								.background(Color.gray)
 						}
 					}
@@ -84,28 +84,47 @@ struct ContentView: View {
 						Text(tutorialContext.loggedIn ? "Looged in" : "Unregistered")
 							.font(.footnote)
 							.foregroundColor(tutorialContext.loggedIn ? Color.green : Color.black)
-					}.padding(.top, 10.0)
+					}.padding(.top, 5.0)
 				}
 				VStack {
 					HStack {
 						Text("Caller:").font(.title).underline()
 						Text(tutorialContext.remoteAddress)
 						Spacer()
-					}.padding(.top, 5)
+					}.padding(.top, 1)
 					HStack {
 						Text("Call msg:").font(.title3).underline()
 						Text(tutorialContext.callMsg)
 						Spacer()
-					}.padding(.top, 5)
-				}.padding(.top, 30)
-				Button(action: tutorialContext.mProviderDelegate.stopCall)
+					}.padding(.top, 1)
+				}.padding(.top, 5)
+                Button(action: {if (self.tutorialContext.isCallRunning) {
+                    tutorialContext.mProviderDelegate.stopCall()
+                } else {
+                    Callmanager.instance().terminateCall()
+                }})
 				{
-					Text("End call").font(.largeTitle)
+					Text("End call").font(.title2)
 						.foregroundColor(Color.white)
-						.frame(width: 120.0, height: 42.0)
+						.frame(width: 120.0, height: 35.0)
 						.background(Color.gray)
-				}.disabled(!tutorialContext.isCallRunning)
-				.padding(.top, 10)
+				}
+				.padding(.top, 5)
+                
+                HStack {
+                    Text("CallAddress:")
+                        .font(.title)
+                    TextField("", text : $tutorialContext.callAddress)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                Button(action: tutorialContext.call)
+                {
+                    Text("CALL").font(.title3)
+                        .foregroundColor(Color.white)
+                        .frame(width: 120.0, height: 35.0)
+                        .background(Color.gray)
+                }
+                .padding(.top, 5)
 			}
 			Group {
 				Spacer()

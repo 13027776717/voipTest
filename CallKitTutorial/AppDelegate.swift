@@ -89,7 +89,7 @@ extension AppDelegate:UNUserNotificationCenterDelegate {
 //        UserDefaults.standard.setValue("willPresent", forKey: "willPresent")
 //                    UserDefaults.standard.synchronize()
         
-        completionHandler(.alert)
+//        completionHandler(.alert)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {

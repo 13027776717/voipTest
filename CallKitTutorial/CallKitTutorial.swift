@@ -33,6 +33,8 @@ class CallKitExampleContext : ObservableObject
 	@Published var remoteAddress : String = "Nobody yet"
 	@Published var isSpeakerEnabled : Bool = false
 	@Published var isMicrophoneEnabled : Bool = false
+    
+    @Published var callAddress : String = ""
 	
 	/*------------ Callkit tutorial related variables ---------------*/
 	let incomingCallName = "Incoming call"
@@ -203,4 +205,13 @@ class CallKitExampleContext : ObservableObject
 //
 //        Callmanager.instance().register(dic: dic)
 //    }
+    
+    func call() {
+        
+        if callAddress != "" {
+//            let address = "sip:" + callAddress + "@" + domain
+            
+            Callmanager.instance().outingCall(address: callAddress)
+        }
+    }
 }

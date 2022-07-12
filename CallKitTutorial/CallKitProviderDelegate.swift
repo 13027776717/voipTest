@@ -47,12 +47,13 @@ class CallKitProviderDelegate : NSObject
 	
 	func stopCall()
 	{
+        
 		let endCallAction = CXEndCallAction(call: incomingCallUUID)
 		let transaction = CXTransaction(action: endCallAction)
 		
 		mCallController.request(transaction, completion: { error in }) // Report to CallKit a call must end
 	}
-	
+    
 }
 
 

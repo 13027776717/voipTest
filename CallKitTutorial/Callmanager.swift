@@ -91,6 +91,48 @@ class Callmanager: NSObject {
         }
     }
     
+    func outingCall(address:String) {
+        
+        do {
+            // As for everything we need to get the SIP URI of the remote and convert it to an Address
+//            let remoteAddress = try Factory.Instance.createAddress(addr: address)
+            
+            if mAccount == nil {
+                mAccount = mCore.defaultAccount
+            }
+            
+            guard let remoteAddress =  mAccount?.normalizeSipUri(username: address) else { return }
+                    
+            // We also need a CallParams object
+            // Create call params expects a Call object for incoming calls, but for outgoing we must use null safely
+            let params = try mCore.createCallParams(call: nil)
+            
+            // We can now configure it
+            // Here we ask for no encryption but we could ask for ZRTP/SRTP/DTLS
+            params.mediaEncryption = MediaEncryption.None
+            // If we wanted to start the call with video directly
+            //params.videoEnabled = true
+            
+            // Finally we start the call
+            let _ = mCore.inviteAddressWithParams(addr: remoteAddress, params: params)
+            // Call process can be followed in onCallStateChanged callback from core listener
+        } catch { NSLog(error.localizedDescription) }
+    }
+    
+    func terminateCall() {
+        do {
+            if (mCore.callsNb == 0) { return }
+            
+            // If the call state isn't paused, we can get it using core.currentCall
+            let coreCall = (mCore.currentCall != nil) ? mCore.currentCall : mCore.calls[0]
+            
+            // Terminating a call is quite simple
+            if let call = coreCall {
+                try call.terminate()
+            }
+        } catch { NSLog(error.localizedDescription) }
+    }
+    
     override init() {
         let factory = Factory.Instance
         // IMPORTANT : In this tutorial, we require the use of a core configuration file.
