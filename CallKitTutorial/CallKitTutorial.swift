@@ -58,11 +58,11 @@ class CallKitExampleContext : ObservableObject
             transportType = user["transportType"]!
             proxy = user["proxy"]!
         } else {
-            username = "1111"
-            passwd = "P@55word1!"
-            domain = "comms.kelare-demo.com"
-            transportType = "TLS"
-            proxy = "comms-ext.kelare-demo.com"
+            username = "1002"
+            passwd = "1002a"
+            domain = "3.89.117.88"
+            transportType = "TCP"
+            proxy = "54.144.43.24"
         }
         mProviderDelegate = CallKitProviderDelegate(context: self)
         
