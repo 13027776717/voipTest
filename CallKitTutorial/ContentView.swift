@@ -11,7 +11,7 @@ import SwiftUI
 struct ContentView: View {
 	
 	@ObservedObject var tutorialContext : CallKitExampleContext
-	
+
 	func callStateString() -> String {
 		if (tutorialContext.isCallRunning) {
 			return "Call running"
@@ -28,29 +28,36 @@ struct ContentView: View {
 			Group {
 				HStack {
 					Text("Username:")
-						.font(.title)
+						.font(.title3)
 					TextField("", text : $tutorialContext.username)
 						.textFieldStyle(RoundedBorderTextFieldStyle())
 						.disabled(tutorialContext.loggedIn)
-				}
+                }
 				HStack {
 					Text("Password:")
-						.font(.title)
+						.font(.title3)
 					TextField("", text : $tutorialContext.passwd)
 						.textFieldStyle(RoundedBorderTextFieldStyle())
 						.disabled(tutorialContext.loggedIn)
 				}
 				HStack {
 					Text("Domain:")
-						.font(.title)
+						.font(.title3)
 					TextField("", text : $tutorialContext.domain)
 						.textFieldStyle(RoundedBorderTextFieldStyle())
 						.disabled(tutorialContext.loggedIn)
 				}
                 HStack {
                     Text("Prxoy:")
-                        .font(.title)
+                        .font(.title3)
                     TextField("", text : $tutorialContext.proxy)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .disabled(tutorialContext.loggedIn)
+                }
+                HStack {
+                    Text("PushPrxoy:")
+                        .font(.title3)
+                    TextField("", text : $tutorialContext.pushProxy)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .disabled(tutorialContext.loggedIn)
                 }
@@ -72,9 +79,9 @@ struct ContentView: View {
 						})
 						{
 							Text(tutorialContext.loggedIn ? "Log out" : "log in account")
-                                .font(.title2)
+                                .font(.title3)
 								.foregroundColor(Color.white)
-								.frame(width: 220.0, height: 40)
+								.frame(width: 220.0, height: 30)
 								.background(Color.gray)
 						}
 					}
@@ -84,47 +91,50 @@ struct ContentView: View {
 						Text(tutorialContext.loggedIn ? "Looged in" : "Unregistered")
 							.font(.footnote)
 							.foregroundColor(tutorialContext.loggedIn ? Color.green : Color.black)
-					}.padding(.top, 5.0)
+					}.padding(.top, 1.0)
 				}
-				VStack {
-					HStack {
-						Text("Caller:").font(.title).underline()
-						Text(tutorialContext.remoteAddress)
-						Spacer()
-					}.padding(.top, 1)
-					HStack {
-						Text("Call msg:").font(.title3).underline()
-						Text(tutorialContext.callMsg)
-						Spacer()
-					}.padding(.top, 1)
-				}.padding(.top, 5)
-                Button(action: {if (self.tutorialContext.isCallRunning) {
-                    tutorialContext.mProviderDelegate.stopCall()
-                } else {
-                    Callmanager.instance().terminateCall()
-                }})
-				{
-					Text("End call").font(.title2)
-						.foregroundColor(Color.white)
-						.frame(width: 120.0, height: 35.0)
-						.background(Color.gray)
-				}
-				.padding(.top, 5)
-                
-                HStack {
-                    Text("CallAddress:")
-                        .font(.title)
-                    TextField("", text : $tutorialContext.callAddress)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                Group {
+                    VStack {
+                        HStack {
+                            Text("Caller:").font(.title3).underline()
+                            Text(tutorialContext.remoteAddress)
+                            Spacer()
+                        }.padding(.top, 1)
+                        HStack {
+                            Text("Call msg:").font(.title3).underline()
+                            Text(tutorialContext.callMsg)
+                            Spacer()
+                        }.padding(.top, 1)
+                    }.padding(.top, 1)
+                    Button(action: {if (self.tutorialContext.isCallRunning) {
+                        tutorialContext.mProviderDelegate.stopCall()
+                    } else {
+                        Callmanager.instance().terminateCall()
+                    }})
+                    {
+                        Text("End call").font(.title2)
+                            .foregroundColor(Color.white)
+                            .frame(width: 120.0, height: 25.0)
+                            .background(Color.gray)
+                    }
+                    .padding(.top, 5)
+                    
+                    HStack {
+                        Text("CallAddress:")
+                            .font(.title3)
+                        TextField("", text : $tutorialContext.callAddress)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                    Button(action: tutorialContext.call)
+                    {
+                        Text("CALL").font(.title3)
+                            .foregroundColor(Color.white)
+                            .frame(width: 120.0, height: 35.0)
+                            .background(Color.gray)
+                    }
+                    .padding(.top, 5)
                 }
-                Button(action: tutorialContext.call)
-                {
-                    Text("CALL").font(.title3)
-                        .foregroundColor(Color.white)
-                        .frame(width: 120.0, height: 35.0)
-                        .background(Color.gray)
-                }
-                .padding(.top, 5)
+				
 			}
 			Group {
 				Spacer()
@@ -137,7 +147,7 @@ struct ContentView: View {
 //                        Text("rest").frame(width: 80, height: 30, alignment: .center)
 //                    }
                 }
-				Text("Core Version is \(tutorialContext.coreVersion)")
+//				Text("Core Version is \(tutorialContext.coreVersion)")
                 
 			}
 		}

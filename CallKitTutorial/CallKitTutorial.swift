@@ -26,6 +26,7 @@ class CallKitExampleContext : ObservableObject
 	@Published var loggedIn: Bool = false
 	@Published var transportType : String = "TLS"
     @Published var proxy: String = "comms-ext.kelare-demo.com"
+    @Published var pushProxy: String = ""
 	
 	@Published var callMsg : String = ""
 	@Published var isCallIncoming : Bool = false
@@ -57,12 +58,14 @@ class CallKitExampleContext : ObservableObject
             domain = user["domain"]!
             transportType = user["transportType"]!
             proxy = user["proxy"]!
+            pushProxy = user["pushProxy"]!
         } else {
             username = "1002"
-            passwd = "1002a"
-            domain = "3.89.117.88"
-            transportType = "TCP"
-            proxy = "54.144.43.24"
+            passwd = "P@55word1!"
+            domain = "sip.justrandoms.com"
+            transportType = "TLS"
+            proxy = ""
+            pushProxy = "proxy.justrandoms.com:5061"
         }
         mProviderDelegate = CallKitProviderDelegate(context: self)
         
@@ -169,7 +172,8 @@ class CallKitExampleContext : ObservableObject
             "passwd":passwd,
             "domain":domain,
             "proxy":proxy,
-            "transportType":transportType
+            "transportType":transportType,
+            "pushProxy": pushProxy
         ];
         
         UserDefaults.standard.setValue(dic, forKey: userDefaultStr)

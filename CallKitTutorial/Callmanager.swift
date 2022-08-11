@@ -32,9 +32,11 @@ class Callmanager: NSObject {
         let username:String = dic["username"] as! String
         let passwd:String = dic["passwd"] as! String
         let domain:String = dic["domain"] as! String
-        var proxy:String = dic["proxy"] as! String
+        let proxy:String = dic["proxy"] as! String
         let transportType:String = dic["transportType"] as! String
+        let pushProxy = dic["pushProxy"] as! String
         
+        var sipProxy = ""
         do {
             mCore.verifyServerCertificates(yesno: false)
             var transport : TransportType
@@ -43,16 +45,47 @@ class Callmanager: NSObject {
             else  { transport = TransportType.Udp }
             
             if proxy == "" && domain != "" {
-                proxy = domain
+                sipProxy = domain
+            }
+            
+            if (pushProxy != "") {
+                sipProxy = pushProxy
+            } else {
+                if (proxy != "") {
+                    sipProxy = proxy
+                } else {
+                    sipProxy = domain
+                }
             }
             
             let authInfo = try Factory.Instance.createAuthInfo(username: username, userid: "", passwd: passwd, ha1: "", realm: "", domain: domain)
+            
             let accountParams = try mCore.createAccountParams()
+            
+            /// identity
             let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + domain))
             try! accountParams.setIdentityaddress(newValue: identity)
-            let address = try Factory.Instance.createAddress(addr: String("sip:" + proxy))
+            
+            /// push  proxy
+            let address = try Factory.Instance.createAddress(addr: String("sip:" + sipProxy))
             try address.setTransport(newValue: transport)
             try accountParams.setServeraddress(newValue: address)
+            
+            if (pushProxy != "" && proxy != "") {
+                /*
+                /// proxy
+                let routeAddress = try Factory.Instance.createAddress(addr: String("sip:" + proxy))
+                /// Routesaddresses
+                try accountParams.setRoutesaddresses(newValue: [address,identity,routeAddress])
+                 */
+                
+                
+            }
+//            x-domain={pbx_address}
+//            x-outbound-proxy={out_address}
+//            mCore.setUserAgent(name: "nodefy", version: "XXXXXX")
+            
+            
             accountParams.registerEnabled = true
             // Enable push notifications on this account
 //            accountParams.pushNotificationAllowed = true
@@ -60,6 +93,9 @@ class Callmanager: NSObject {
             // We're in a sandbox application, so we must set the provider to "apns.dev" since it will be "apns" by default, which is used only for production apps
             accountParams.pushNotificationConfig?.provider = "apns.dev"
             mAccount = try mCore.createAccount(params: accountParams)
+            
+            mAccount?.setCustomHeader(headerName: "x-domain", headerValue: pushProxy)
+            mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             mCore.addAuthInfo(info: authInfo)
             
             try mCore.addAccount(account: mAccount!)
@@ -109,9 +145,28 @@ class Callmanager: NSObject {
             
             // We can now configure it
             // Here we ask for no encryption but we could ask for ZRTP/SRTP/DTLS
-            params.mediaEncryption = MediaEncryption.None
+        
+            params.mediaEncryption = MediaEncryption.SRTP
             // If we wanted to start the call with video directly
             //params.videoEnabled = true
+            params.audioEnabled = true
+            
+            let accountParams = mAccount?.params
+            //            x-domain={pbx_address}
+            //            x-outbound-proxy={out_address}
+            params.addCustomHeader(headerName: "x-domain", headerValue: "pbx_address")
+            params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: "out_address")
+            let remoteStr =  remoteAddress.asString()
+            print("remoteStr == \(remoteStr)")
+            if let routeArray = accountParams?.routesAddresses {
+                for array in routeArray {
+                    let str = array.asString()
+                    print("str == \(str)")
+                    
+                }
+            }
+            
+            
             
             // Finally we start the call
             let _ = mCore.inviteAddressWithParams(addr: remoteAddress, params: params)
@@ -151,7 +206,7 @@ class Callmanager: NSObject {
         mCoreDelegate = CoreDelegateStub( onCallStateChanged: { (core: Core, call: Call, state: Call.State, message: String) in
             
             print("call.d =22= \(call.callLog?.callId)")
-            NSLog("111111")
+            
 //            UserDefaults.standard.setValue("all.state", forKey: "call.state")
 //            UserDefaults.standard.setValue("cellCome", forKey:"call")
             let notificationName = Notification.Name(rawValue: "call")
