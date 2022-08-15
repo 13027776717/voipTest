@@ -72,6 +72,7 @@ class Callmanager: NSObject {
             try accountParams.setServeraddress(newValue: address)
             
             if (pushProxy != "" && proxy != "") {
+                /// 此方法不可行
                 /*
                 /// proxy
                 let routeAddress = try Factory.Instance.createAddress(addr: String("sip:" + proxy))
@@ -81,9 +82,8 @@ class Callmanager: NSObject {
                 
                 
             }
-//            x-domain={pbx_address}
-//            x-outbound-proxy={out_address}
-//            mCore.setUserAgent(name: "nodefy", version: "XXXXXX")
+
+//            mCore.setUserAgent(name: "", version: "")
             
             
             accountParams.registerEnabled = true
@@ -94,6 +94,7 @@ class Callmanager: NSObject {
             accountParams.pushNotificationConfig?.provider = "apns.dev"
             mAccount = try mCore.createAccount(params: accountParams)
             
+            // add CustomHeader
             mAccount?.setCustomHeader(headerName: "x-domain", headerValue: pushProxy)
             mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             mCore.addAuthInfo(info: authInfo)
@@ -152,10 +153,7 @@ class Callmanager: NSObject {
             params.audioEnabled = true
             
             let accountParams = mAccount?.params
-            //            x-domain={pbx_address}
-            //            x-outbound-proxy={out_address}
-            params.addCustomHeader(headerName: "x-domain", headerValue: "pbx_address")
-            params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: "out_address")
+            
             let remoteStr =  remoteAddress.asString()
             print("remoteStr == \(remoteStr)")
             if let routeArray = accountParams?.routesAddresses {
