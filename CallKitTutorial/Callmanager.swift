@@ -35,7 +35,7 @@ class Callmanager: NSObject {
         let proxy:String = dic["proxy"] as! String
         let transportType:String = dic["transportType"] as! String
         let pushProxy = dic["pushProxy"] as! String
-        
+        var identityAddress = ""
         var sipProxy = ""
         do {
             mCore.verifyServerCertificates(yesno: false)
@@ -50,7 +50,9 @@ class Callmanager: NSObject {
             
             if (pushProxy != "") {
                 sipProxy = pushProxy
+                identityAddress = pushProxy
             } else {
+                identityAddress = domain
                 if (proxy != "") {
                     sipProxy = proxy
                 } else {
@@ -63,7 +65,7 @@ class Callmanager: NSObject {
             let accountParams = try mCore.createAccountParams()
             
             /// identity
-            let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + domain))
+            let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + identityAddress))
             try! accountParams.setIdentityaddress(newValue: identity)
             
             /// push  proxy
@@ -71,21 +73,7 @@ class Callmanager: NSObject {
             try address.setTransport(newValue: transport)
             try accountParams.setServeraddress(newValue: address)
             
-            if (pushProxy != "" && proxy != "") {
-                /// 此方法不可行
-                /*
-                /// proxy
-                let routeAddress = try Factory.Instance.createAddress(addr: String("sip:" + proxy))
-                /// Routesaddresses
-                try accountParams.setRoutesaddresses(newValue: [address,identity,routeAddress])
-                 */
-                
-                
-            }
-
-//            mCore.setUserAgent(name: "", version: "")
-            
-            
+         
             accountParams.registerEnabled = true
             // Enable push notifications on this account
 //            accountParams.pushNotificationAllowed = true
@@ -95,16 +83,12 @@ class Callmanager: NSObject {
             mAccount = try mCore.createAccount(params: accountParams)
             
             // add CustomHeader
-            mAccount?.setCustomHeader(headerName: "x-domain", headerValue: pushProxy)
+            mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
             mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             mCore.addAuthInfo(info: authInfo)
             
             try mCore.addAccount(account: mAccount!)
             mCore.defaultAccount = mAccount
-            
-            if (isComeFromVoip) {
-//                UserDefaults.standard.setValue("register", forKey: "register")
-            }
             
         } catch { NSLog(error.localizedDescription) }
 
@@ -152,19 +136,14 @@ class Callmanager: NSObject {
             //params.videoEnabled = true
             params.audioEnabled = true
             
-            let accountParams = mAccount?.params
+            // add header
+            let userDefault = UserDefaults.standard.value(forKey: userDefaultStr)
             
-            let remoteStr =  remoteAddress.asString()
-            print("remoteStr == \(remoteStr)")
-            if let routeArray = accountParams?.routesAddresses {
-                for array in routeArray {
-                    let str = array.asString()
-                    print("str == \(str)")
-                    
-                }
+            if userDefault != nil {
+                let user = userDefault as! Dictionary<String, String>
+                params.addCustomHeader(headerName: "x-domain", headerValue: user["domain"])
+                params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: user["proxy"])
             }
-            
-            
             
             // Finally we start the call
             let _ = mCore.inviteAddressWithParams(addr: remoteAddress, params: params)

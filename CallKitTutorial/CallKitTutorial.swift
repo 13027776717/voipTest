@@ -60,7 +60,7 @@ class CallKitExampleContext : ObservableObject
             proxy = user["proxy"]!
             pushProxy = user["pushProxy"]!
         } else {
-            username = "1002"
+            username = "1006"
             passwd = "P@55word1!"
             domain = "sip.justrandoms.com"
             transportType = "TLS"
@@ -213,8 +213,7 @@ class CallKitExampleContext : ObservableObject
     func call() {
         
         if callAddress != "" {
-//            let address = "sip:" + callAddress + "@" + domain
-            
+
             Callmanager.instance().outingCall(address: callAddress)
         }
     }
