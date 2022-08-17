@@ -35,7 +35,7 @@ class Callmanager: NSObject {
         let proxy:String = dic["proxy"] as! String
         let transportType:String = dic["transportType"] as! String
         let pushProxy = dic["pushProxy"] as! String
-        var identityAddress = ""
+        var domainAddress = ""
         var sipProxy = ""
         do {
             mCore.verifyServerCertificates(yesno: false)
@@ -44,20 +44,41 @@ class Callmanager: NSObject {
             else if (transportType == "TCP") { transport = TransportType.Tcp }
             else  { transport = TransportType.Udp }
             
-            if proxy == "" && domain != "" {
-                sipProxy = domain
-            }
+//            if (pushProxy != "") {
+//                sipProxy = pushProxy
+//                domainAddress = pushProxy
+//            } else {
+//                domainAddress = domain
+//                if (proxy != "") {
+//                    sipProxy = proxy
+//                } else {
+//                    sipProxy = domain
+//                }
+//            }
             
-            if (pushProxy != "") {
+            var isHeader = false
+            
+            if (pushProxy != "" && proxy != "") {
+                /// domain  proxy  push proxy
+                isHeader = true
+                domainAddress = pushProxy
                 sipProxy = pushProxy
-                identityAddress = pushProxy
             } else {
-                identityAddress = domain
-                if (proxy != "") {
-                    sipProxy = proxy
+                
+                domainAddress = domain
+                if (pushProxy != "" || proxy != "") {
+                    
+                    if (pushProxy != "") {
+                        sipProxy = pushProxy
+                    } else {
+                        sipProxy = proxy
+                    }
+                    
                 } else {
+                    // domain
                     sipProxy = domain
                 }
+                
             }
             
             let authInfo = try Factory.Instance.createAuthInfo(username: username, userid: "", passwd: passwd, ha1: "", realm: "", domain: domain)
@@ -65,11 +86,11 @@ class Callmanager: NSObject {
             let accountParams = try mCore.createAccountParams()
             
             /// identity
-            let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + identityAddress))
+            let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + domainAddress))
             try! accountParams.setIdentityaddress(newValue: identity)
             
             /// push  proxy
-            let address = try Factory.Instance.createAddress(addr: String("sip:" + sipProxy))
+            let address = try Factory.Instance.createAddress(addr: String("sip:" + domainAddress))
             try address.setTransport(newValue: transport)
             try accountParams.setServeraddress(newValue: address)
             
@@ -83,8 +104,11 @@ class Callmanager: NSObject {
             mAccount = try mCore.createAccount(params: accountParams)
             
             // add CustomHeader
-            mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
-            mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
+            if isHeader {
+                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
+                mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
+            }
+            
             mCore.addAuthInfo(info: authInfo)
             
             try mCore.addAccount(account: mAccount!)
@@ -141,8 +165,18 @@ class Callmanager: NSObject {
             
             if userDefault != nil {
                 let user = userDefault as! Dictionary<String, String>
-                params.addCustomHeader(headerName: "x-domain", headerValue: user["domain"])
-                params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: user["proxy"])
+                
+               
+                let proxy:String = user["proxy"]!
+
+                let pushProxy:String = user["pushProxy"]!
+
+                if (proxy != "" && pushProxy != "") {
+                    params.addCustomHeader(headerName: "x-domain", headerValue: user["domain"])
+                    params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: user["proxy"])
+                }
+                
+                
             }
             
             // Finally we start the call
