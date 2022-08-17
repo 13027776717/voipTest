@@ -37,6 +37,9 @@ class Callmanager: NSObject {
         let pushProxy = dic["pushProxy"] as! String
         var domainAddress = ""
         var sipProxy = ""
+        let identityAddress = dic["identity"] as! String
+        let serverAddress = dic["server"] as! String
+
         do {
             mCore.verifyServerCertificates(yesno: false)
             var transport : TransportType
@@ -44,18 +47,7 @@ class Callmanager: NSObject {
             else if (transportType == "TCP") { transport = TransportType.Tcp }
             else  { transport = TransportType.Udp }
             
-//            if (pushProxy != "") {
-//                sipProxy = pushProxy
-//                domainAddress = pushProxy
-//            } else {
-//                domainAddress = domain
-//                if (proxy != "") {
-//                    sipProxy = proxy
-//                } else {
-//                    sipProxy = domain
-//                }
-//            }
-            
+
             var isHeader = false
             
             if (pushProxy != "" && proxy != "") {
@@ -86,11 +78,11 @@ class Callmanager: NSObject {
             let accountParams = try mCore.createAccountParams()
             
             /// identity
-            let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + domainAddress))
+            let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + identityAddress))
             try! accountParams.setIdentityaddress(newValue: identity)
             
             /// push  proxy
-            let address = try Factory.Instance.createAddress(addr: String("sip:" + domainAddress))
+            let address = try Factory.Instance.createAddress(addr: String("sip:" + serverAddress))
             try address.setTransport(newValue: transport)
             try accountParams.setServeraddress(newValue: address)
             
@@ -136,7 +128,7 @@ class Callmanager: NSObject {
         }
     }
     
-    func outingCall(address:String) {
+    func outingCall(address:String, encryption: MediaEncryption) {
         
         do {
             // As for everything we need to get the SIP URI of the remote and convert it to an Address
@@ -155,7 +147,7 @@ class Callmanager: NSObject {
             // We can now configure it
             // Here we ask for no encryption but we could ask for ZRTP/SRTP/DTLS
         
-            params.mediaEncryption = MediaEncryption.SRTP
+            params.mediaEncryption = encryption
             // If we wanted to start the call with video directly
             //params.videoEnabled = true
             params.audioEnabled = true

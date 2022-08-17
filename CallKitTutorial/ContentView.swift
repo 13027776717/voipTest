@@ -7,10 +7,13 @@
 //
 
 import SwiftUI
+import CoreMedia
 
 struct ContentView: View {
 	
 	@ObservedObject var tutorialContext : CallKitExampleContext
+    @State var showIDSheet = false
+    @State var showServeSheet = false
 
 	func callStateString() -> String {
 		if (tutorialContext.isCallRunning) {
@@ -23,7 +26,9 @@ struct ContentView: View {
 	}
 	
 	var body: some View {
-		
+        ScrollView {
+            
+        
 		VStack {
 			Group {
 				HStack {
@@ -66,6 +71,33 @@ struct ContentView: View {
 					Text("TCP").tag("TCP")
 					Text("UDP").tag("UDP")
 				}.pickerStyle(SegmentedPickerStyle()).padding()
+               
+                Group {
+                    HStack {
+                        Text("identity: ")
+                            .font(.title3)
+                        Button(action: {
+                            self.showIDSheet = true
+                        }){
+                            
+                            Text(tutorialContext.identityString != "" ? tutorialContext.identityString: tutorialContext.domain)
+                        }.actionSheet(isPresented: $showIDSheet, content: {idSheet})
+                            
+                    }.padding(.top, 1.0)
+                    
+                    HStack {
+                        Text("serverAddress: ")
+                            .font(.title3)
+                        Button(action: {
+                            self.showServeSheet = true
+                        }){
+                            
+                            Text(tutorialContext.serveString != "" ? tutorialContext.serveString: tutorialContext.domain)
+                        }.actionSheet(isPresented: $showServeSheet, content: {serveSheet})
+                            
+                    }.padding(.top, 1.0)
+                }
+                
 				VStack {
 					HStack {
 						Button(action:  {
@@ -125,6 +157,13 @@ struct ContentView: View {
                         TextField("", text : $tutorialContext.callAddress)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
+                    Picker(selection: $tutorialContext.encryption, label: Text("Encryption:")) {
+                        Text("None").tag("None")
+                        Text("SRTP").tag("SRTP")
+                        Text("ZRTP").tag("ZRTP")
+                        Text("DTLS").tag("DTLS")
+                    }.pickerStyle(SegmentedPickerStyle()).padding()
+                    
                     Button(action: tutorialContext.call)
                     {
                         Text("CALL").font(.title3)
@@ -149,10 +188,58 @@ struct ContentView: View {
                 }
 //				Text("Core Version is \(tutorialContext.coreVersion)")
                 
-			}
+            }
+            .alert(isPresented: $tutorialContext.showTip) {
+                () -> Alert in
+                Alert(title: Text("identity or serverAddress is nil"))
+            }
 		}
 		.padding()
+        }
 	}
+    
+    private var idSheet: ActionSheet {
+        let action = ActionSheet(title: Text("Select Indentity Address"),
+                                 message: Text(""),
+                                 buttons:
+                                 [.default(Text(tutorialContext.domain), action: {
+                                     tutorialContext.identityString = tutorialContext.domain
+                                     self.showIDSheet = false
+                                 }), .default(Text(tutorialContext.proxy), action: {
+                                     tutorialContext.identityString = tutorialContext.proxy
+                                     self.showIDSheet = false
+                                 }),
+                                 .default(Text(tutorialContext.pushProxy), action: {
+                                     tutorialContext.identityString = tutorialContext.pushProxy
+                                     self.showIDSheet = false
+                                 }), .cancel({
+                                     print("Cancel")
+                                     self.showIDSheet = false
+                                 })])
+        return action
+    }
+    
+    private var serveSheet :ActionSheet {
+        
+         let action =  ActionSheet(title: Text("Select Server Address"),
+                        message: Text(""),
+                        buttons:
+                                    [.default(Text(tutorialContext.domain), action: {
+                                        tutorialContext.serveString = tutorialContext.domain
+                                        self.showServeSheet = false
+                                    }), .default(Text(tutorialContext.proxy), action: {
+                                        tutorialContext.serveString = tutorialContext.proxy
+                                        self.showServeSheet = false
+                                    }),
+                                    .default(Text(tutorialContext.pushProxy), action: {
+                                        tutorialContext.serveString = tutorialContext.pushProxy
+                                        self.showServeSheet = false
+                                    }), .cancel({
+                                        print("Cancel")
+                                        self.showServeSheet = false
+                                    })])
+        return action
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {

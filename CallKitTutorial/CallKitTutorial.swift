@@ -11,6 +11,7 @@ import AVFoundation
 
 #if DEBUG
 import FLEX
+import SwiftUI
 #endif
 
 class CallKitExampleContext : ObservableObject
@@ -36,6 +37,11 @@ class CallKitExampleContext : ObservableObject
 	@Published var isMicrophoneEnabled : Bool = false
     
     @Published var callAddress : String = ""
+    
+    @Published var identityString = ""
+    @Published var serveString = ""
+    @Published var encryption = "SRTP"
+    @Published var showTip = false
 	
 	/*------------ Callkit tutorial related variables ---------------*/
 	let incomingCallName = "Incoming call"
@@ -67,6 +73,10 @@ class CallKitExampleContext : ObservableObject
             proxy = ""
             pushProxy = "proxy.justrandoms.com:5061"
         }
+        
+        identityString = domain
+        serveString = domain
+        
         mProviderDelegate = CallKitProviderDelegate(context: self)
         
         let back = UserDefaults.standard.value(forKey: backGround)
@@ -167,13 +177,21 @@ class CallKitExampleContext : ObservableObject
             return
         }
         
+        if (identityString.trim() == "" || serveString.trim() == "") {
+            
+            showTip = true
+            return
+        }
+        
         let dic = [
             "username":username,
             "passwd":passwd,
             "domain":domain,
             "proxy":proxy,
             "transportType":transportType,
-            "pushProxy": pushProxy
+            "pushProxy": pushProxy,
+            "identity":identityString,
+            "server":serveString
         ];
         
         UserDefaults.standard.setValue(dic, forKey: userDefaultStr)
@@ -204,17 +222,34 @@ class CallKitExampleContext : ObservableObject
         UserDefaults.standard.setValue("", forKey: "pushRegistry")
     }
     
-//    func test() {
-//        let dic = UserDefaults.standard.value(forKey: userDefaultStr) as! NSDictionary
-//
-//        Callmanager.instance().register(dic: dic)
-//    }
     
     func call() {
         
         if callAddress != "" {
-
-            Callmanager.instance().outingCall(address: callAddress)
+            var encrypt :MediaEncryption  = .None
+            if (encryption == "SRTP") {
+                encrypt = .SRTP
+            } else if (encryption == "ZRTP") {
+                encrypt = .ZRTP
+            } else if (encryption == "DTLS") {
+                encrypt = .DTLS
+            } else {
+                encrypt = .None
+            }
+            Callmanager.instance().outingCall(address: callAddress,encryption: encrypt)
         }
     }
+    
+   
+    
+}
+
+extension String {
+    
+    func trim() -> String {
+        var resultString = self.trimmingCharacters(in: CharacterSet.whitespaces)
+        resultString = resultString.trimmingCharacters(in: CharacterSet.newlines)
+        return resultString
+    }
+
 }
