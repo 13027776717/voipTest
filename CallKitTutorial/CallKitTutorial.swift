@@ -65,6 +65,8 @@ class CallKitExampleContext : ObservableObject
             transportType = user["transportType"]!
             proxy = user["proxy"]!
             pushProxy = user["pushProxy"]!
+            identityString = user["identity"]!
+            serveString = user["server"]!
         } else {
             username = "1006"
             passwd = "P@55word1!"
@@ -74,8 +76,13 @@ class CallKitExampleContext : ObservableObject
             pushProxy = "proxy.justrandoms.com:5061"
         }
         
-        identityString = domain
-        serveString = domain
+        if (identityString == "") {
+            identityString = domain
+        }
+        
+        if (serveString == "") {
+            serveString = domain
+        }
         
         mProviderDelegate = CallKitProviderDelegate(context: self)
         
@@ -105,13 +112,13 @@ class CallKitExampleContext : ObservableObject
             self.loggedIn = true
             // Since core has "Push Enabled", the reception and setting of the push notification token is done automatically
             // It should have been set and used when we log in, you can check here or in the liblinphone logs
-            if self.isComingFromVoip {
+            
 #if targetEnvironment(simulator)
        
 #else
-                self.mProviderDelegate.incomingCall()
+//                self.mProviderDelegate.incomingCall()
 #endif
-            }
+
         } else {
             self.loggedIn = false
         }
@@ -163,6 +170,7 @@ class CallKitExampleContext : ObservableObject
     
 	
 	func login() {
+        
         isComeFromVoip = false
         Callmanager.instance().isLogin = true
         if (username == "") {

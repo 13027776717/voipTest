@@ -71,6 +71,7 @@ struct ContentView: View {
 					Text("TCP").tag("TCP")
 					Text("UDP").tag("UDP")
 				}.pickerStyle(SegmentedPickerStyle()).padding()
+                    .disabled(tutorialContext.loggedIn)
                
                 Group {
                     HStack {
@@ -80,8 +81,9 @@ struct ContentView: View {
                             self.showIDSheet = true
                         }){
                             
-                            Text(tutorialContext.identityString != "" ? tutorialContext.identityString: tutorialContext.domain)
+                            Text(tutorialContext.identityString)
                         }.actionSheet(isPresented: $showIDSheet, content: {idSheet})
+                            .disabled(tutorialContext.loggedIn)
                             
                     }.padding(.top, 1.0)
                     
@@ -92,8 +94,9 @@ struct ContentView: View {
                             self.showServeSheet = true
                         }){
                             
-                            Text(tutorialContext.serveString != "" ? tutorialContext.serveString: tutorialContext.domain)
+                            Text(tutorialContext.serveString)
                         }.actionSheet(isPresented: $showServeSheet, content: {serveSheet})
+                            .disabled(tutorialContext.loggedIn)
                             
                     }.padding(.top, 1.0)
                 }

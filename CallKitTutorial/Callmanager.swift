@@ -208,28 +208,12 @@ class Callmanager: NSObject {
         
         mCoreDelegate = CoreDelegateStub( onCallStateChanged: { (core: Core, call: Call, state: Call.State, message: String) in
             
-            print("call.d =22= \(call.callLog?.callId)")
-            
-//            UserDefaults.standard.setValue("all.state", forKey: "call.state")
-//            UserDefaults.standard.setValue("cellCome", forKey:"call")
             let notificationName = Notification.Name(rawValue: "call")
                         NotificationCenter.default.post(name: notificationName, object: nil,
                                                         userInfo: ["state":state,"call":call,"message":message])
             
         }, onAccountRegistrationStateChanged: { (core: Core, account: Account, state: RegistrationState, message: String) in
            
-            if (isComeFromVoip) {
-//                UserDefaults.standard.setValue(state, forKey: "state")
-            }
-            if (state == .Ok) {
-//                self.isLogin = true
-//                if (isComeFromVoip) {
-//                    UserDefaults.standard.setValue("Back Ground Success", forKey: backGround)
-                    isComeFromVoip = false
-//                }
-            } else {
-//                self.isLogin = false
-            }
             let notificationName = Notification.Name(rawValue: "register")
                         NotificationCenter.default.post(name: notificationName, object: nil,
                                                         userInfo: ["state":state])
