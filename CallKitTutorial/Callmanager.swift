@@ -76,9 +76,10 @@ class Callmanager: NSObject {
             let authInfo = try Factory.Instance.createAuthInfo(username: username, userid: "", passwd: passwd, ha1: "", realm: "", domain: domain)
             
             let accountParams = try mCore.createAccountParams()
-            
+    
             /// identity
             let identity = try Factory.Instance.createAddress(addr: String("sip:" + username + "@" + identityAddress))
+            try identity.setTransport(newValue: transport)
             try! accountParams.setIdentityaddress(newValue: identity)
             
             /// push  proxy
@@ -168,6 +169,14 @@ class Callmanager: NSObject {
                     params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: user["proxy"])
                 }
                 
+                /// dial  add transport
+                let transportType:String = user["transportType"]!
+                var transport : TransportType
+                if (transportType == "TLS") { transport = TransportType.Tls }
+                else if (transportType == "TCP") { transport = TransportType.Tcp }
+                else  { transport = TransportType.Udp }
+                
+                try remoteAddress.setTransport(newValue: transport)
                 
             }
             
