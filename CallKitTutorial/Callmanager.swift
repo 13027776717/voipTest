@@ -117,6 +117,7 @@ class Callmanager: NSObject {
             let params = account.params
             let clonedParams = params?.clone()
             clonedParams?.registerEnabled = false
+            clonedParams?.expires = 0
             account.params = clonedParams
         }
     }
