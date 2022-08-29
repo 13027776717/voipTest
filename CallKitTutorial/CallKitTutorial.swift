@@ -21,9 +21,9 @@ class CallKitExampleContext : ObservableObject
 	
 	var mAccount: Account?
 	var mCoreDelegate : CoreDelegate!
-	@Published var username : String = "6699"
-	@Published var passwd : String = "6699"
-	@Published var domain : String = "119.28.64.168"
+	@Published var username : String = "3333"
+	@Published var passwd : String = "7cU3rjjJjb4EXqwFqTHBvLzAjy7A3s"
+	@Published var domain : String = "comms.kelare-demo.com" /// 119.28.64.168
 	@Published var loggedIn: Bool = false
 	@Published var transportType : String = "TLS"
     @Published var proxy: String = "comms-ext.kelare-demo.com"
