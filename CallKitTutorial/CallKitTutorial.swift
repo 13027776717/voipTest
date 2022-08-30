@@ -42,6 +42,9 @@ class CallKitExampleContext : ObservableObject
     @Published var serveString = ""
     @Published var encryption = "SRTP"
     @Published var showTip = false
+    
+    @Published var handlerPushType  = 0
+    
 	
 	/*------------ Callkit tutorial related variables ---------------*/
 	let incomingCallName = "Incoming call"
@@ -54,6 +57,16 @@ class CallKitExampleContext : ObservableObject
     
 	init()
 	{
+        let handleType = UserDefaults.standard.value(forKey: "handleType")
+        
+        if (handleType != nil) {
+            let type = handleType as! Int
+            handlerPushType = type
+        } else {
+            UserDefaults.standard.setValue(0, forKey: "handleType")
+            handlerPushType = 0
+        }
+        
 		LoggingService.Instance.logLevel = LogLevel.Debug
         let userDefault = UserDefaults.standard.value(forKey: userDefaultStr)
         
@@ -103,7 +116,7 @@ class CallKitExampleContext : ObservableObject
         
         
 	}
-    
+   
     @objc func register(notification: Notification) {
         let userInfo = notification.userInfo as! [String: AnyObject]
         let state:RegistrationState = userInfo["state"] as! RegistrationState
@@ -232,7 +245,7 @@ class CallKitExampleContext : ObservableObject
     
     
     func call() {
-        
+    
         if callAddress != "" {
             var encrypt :MediaEncryption  = .None
             if (encryption == "SRTP") {
@@ -246,6 +259,13 @@ class CallKitExampleContext : ObservableObject
             }
             Callmanager.instance().outingCall(address: callAddress,encryption: encrypt)
         }
+    }
+    
+    func handlerChange(_ tag: Int){
+        UserDefaults.standard.setValue(tag, forKey: "handleType")
+        UserDefaults.standard.synchronize()
+        
+        print("handlerChange tag: \(tag)")
     }
     
    

@@ -24,11 +24,11 @@ struct ContentView: View {
 			return "No Call"
 		}
 	}
+    
 	
 	var body: some View {
         ScrollView {
             
-        
 		VStack {
 			Group {
 				HStack {
@@ -123,11 +123,22 @@ struct ContentView: View {
 					HStack {
 						Text("Login State : ")
 							.font(.footnote)
-						Text(tutorialContext.loggedIn ? "Looged in" : "Unregistered")
+						Text(tutorialContext.loggedIn ? "Logged in" : "Unregistered")
 							.font(.footnote)
 							.foregroundColor(tutorialContext.loggedIn ? Color.green : Color.black)
 					}.padding(.top, 1.0)
 				}
+                Group {
+                    Picker(selection: $tutorialContext.handlerPushType, label: Text("Handle:")) {
+                        Text("None").tag(0)
+                        Text("CallId").tag(1)
+                        Text("Unregister-register").tag(2)
+                    }.onChange(of: tutorialContext.handlerPushType) { tag in
+                        
+                        tutorialContext.handlerChange(tag)
+                    }.pickerStyle(SegmentedPickerStyle()).padding()
+                        
+                }
                 Group {
                     VStack {
                         HStack {

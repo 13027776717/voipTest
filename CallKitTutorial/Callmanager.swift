@@ -98,11 +98,17 @@ class Callmanager: NSObject {
             
             // add CustomHeader
             if isHeader {
-                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
+//                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
                 mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             }
             
             mCore.addAuthInfo(info: authInfo)
+            
+
+//            accountParams.contactParameters = "expires = 7200"
+            
+//            let para2 = accountParams.contactParameters
+            
             
             try mCore.addAccount(account: mAccount!)
             mCore.defaultAccount = mAccount
@@ -117,7 +123,13 @@ class Callmanager: NSObject {
             let params = account.params
             let clonedParams = params?.clone()
             clonedParams?.registerEnabled = false
-            clonedParams?.expires = 0
+//            clonedParams?.expires = 0
+//            let parameters = clonedParams?.contactParameters
+            
+            clonedParams?.contactParameters = "express = 0"
+            
+            let parameters = clonedParams?.contactParameters
+            
             account.params = clonedParams
         }
     }
@@ -166,8 +178,8 @@ class Callmanager: NSObject {
                 let pushProxy:String = user["pushProxy"]!
 
                 if (proxy != "" && pushProxy != "") {
-                    params.addCustomHeader(headerName: "x-domain", headerValue: user["domain"])
-                    params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: user["proxy"])
+//                    params.addCustomHeader(headerName: "x-domain", headerValue: user["domain"])
+                    params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
                 }
                 
                 /// dial  add transport
