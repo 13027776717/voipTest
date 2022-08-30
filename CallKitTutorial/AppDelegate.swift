@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         registerForPushNotifications()
-        voipRegistration()
+//        voipRegistration()
         Callmanager.instance()
         return true
     }
@@ -82,6 +82,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         voipRegistry.desiredPushTypes = [.voIP]
     }
 }
+
+///Notification
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -164,6 +166,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 }
 
+/// VOIP  Push
 extension AppDelegate: PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         var stringifiedToken = pushCredentials.token.map { String(format: "%02X", $0) }.joined()

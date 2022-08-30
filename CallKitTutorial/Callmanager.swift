@@ -95,13 +95,11 @@ class Callmanager: NSObject {
 //                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
                 mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             }
-
+            /// verifyServerCertificate
+//            mCore.verifyServerCertificates(yesno: false)
             mCore.addAuthInfo(info: authInfo)
-
-//            accountParams.contactParameters = "expires = 7200"
-
-//            let para2 = accountParams.contactParameters
-
+            ///contact add expires
+            accountParams.contactParameters = "expires=3600"
             try mCore.addAccount(account: mAccount!)
             mCore.defaultAccount = mAccount
 
@@ -114,12 +112,6 @@ class Callmanager: NSObject {
             let clonedParams = params?.clone()
             clonedParams?.registerEnabled = false
 //            clonedParams?.expires = 0
-//            let parameters = clonedParams?.contactParameters
-
-            clonedParams?.contactParameters = "express = 0"
-
-            let parameters = clonedParams?.contactParameters
-
             account.params = clonedParams
         }
     }
