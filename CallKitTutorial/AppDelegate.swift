@@ -13,6 +13,7 @@ import UIKit
 
 let userDefaultStr: String = "voipTest"
 let backGround: String = "backGround"
+let handleNotificationType = "handleNotificationType"
 
 var isComeFromVoip: Bool = false
 
@@ -58,7 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-
     }
 
     func registerForPushNotifications() {
@@ -85,84 +85,81 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-
 //        completionHandler(.alert)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo as NSDictionary
-        UserDefaults.standard.setValue(userInfo, forKey: "NotificationuserInfo")
-        UserDefaults.standard.synchronize()
+        var handlerPushType = 0
+        let handleType = UserDefaults.standard.value(forKey: handleNotificationType)
 
-        let callid = response.notification.request.content.userInfo["CallId"] as? String
-        if callid != nil && callid != "" {
-            callID = callid!
+        if handleType != nil {
+            let type = handleType as! Int
+            handlerPushType = type
+        }
+
+        switch handlerPushType {
+        case 0:
+
+            /// do nothing
+            break
+        case 1:
+
+            /// use Callid
             
-            var handlerPushType = 0
-            let handleType = UserDefaults.standard.value(forKey: "handleType")
-            
-            if (handleType != nil) {
-                let type = handleType as! Int
-                handlerPushType = type
+            let userInfo = response.notification.request.content.userInfo as NSDictionary
+            UserDefaults.standard.setValue(userInfo, forKey: "NotificationuserInfo")
+            UserDefaults.standard.synchronize()
+
+            let callid = response.notification.request.content.userInfo["CallId"] as? String
+            if callid != nil && callid != "" {
+                callID = callid!
+
+                let call = Callmanager.instance().findCall(callId: callid) as? Call ?? nil
+
+                if call != nil {
+                    tutorialContext.mCall = call
+                    tutorialContext.mProviderDelegate.incomingCall()
+                }
             }
-            
-            switch handlerPushType {
-            case 0:
-                do {
-                   /// do nothing
-                }
-                break
-            case 1:
-                do {
-                    /// use Callid
-                    let call = Callmanager.instance().findCall(callId: callid) as? Call ?? nil
 
-                    if call != nil {
-                        tutorialContext.mCall = call
-                        tutorialContext.mProviderDelegate.incomingCall()
-                    }
-                }
-                break
-            case 2:
-                do {
-                    ///unregister - register
-                    
-                    /// unregister
-                    Callmanager.theCallManager?.unregister()
+            break
+        case 2:
 
-                    /// register
-                    let userDefault = UserDefaults.standard.value(forKey: userDefaultStr)
+            /// unregister - register
 
-                    if userDefault != nil {
-                        let user = userDefault as! Dictionary<String, String>
-                        let username = user["username"]!
-                        let passwd = user["passwd"]!
-                        let domain = user["domain"]!
-                        let transportType = user["transportType"]!
-                        let proxy = user["proxy"]!
-                        let pushProxy = user["pushProxy"]!
-                        let identity = user["identity"]!
-                        let server = user["server"]!
+            /// unregister
+            Callmanager.theCallManager?.unregister()
 
-                        let dic = [
-                            "username": username,
-                            "passwd": passwd,
-                            "domain": domain,
-                            "proxy": proxy,
-                            "transportType": transportType,
-                            "pushProxy": pushProxy,
-                            "identity": identity,
-                            "server": server,
-                        ]
+            /// register
+            let userDefault = UserDefaults.standard.value(forKey: userDefaultStr)
 
-                        Callmanager.instance().register(dic: dic as NSDictionary)
-                    }
-                    
-                }
-                break
-            default: break
-                
+            if userDefault != nil {
+                let user = userDefault as! Dictionary<String, String>
+                let username = user["username"]!
+                let passwd = user["passwd"]!
+                let domain = user["domain"]!
+                let transportType = user["transportType"]!
+                let proxy = user["proxy"]!
+                let pushProxy = user["pushProxy"]!
+                let identity = user["identity"]!
+                let server = user["server"]!
+
+                let dic = [
+                    "username": username,
+                    "passwd": passwd,
+                    "domain": domain,
+                    "proxy": proxy,
+                    "transportType": transportType,
+                    "pushProxy": pushProxy,
+                    "identity": identity,
+                    "server": server,
+                ]
+
+                Callmanager.instance().register(dic: dic as NSDictionary)
             }
+
+            break
+        default: break
         }
     }
 }
