@@ -47,12 +47,13 @@ class Callmanager: NSObject {
             else { transport = TransportType.Udp }
 
             var isHeader = false
-
+            var isOutboundProxy = false
             if pushProxy != "" && proxy != "" {
                 /// domain  proxy  push proxy
                 isHeader = true
                 domainAddress = pushProxy
                 sipProxy = pushProxy
+                isOutboundProxy = true
             } else {
                 domainAddress = domain
                 if pushProxy != "" || proxy != "" {
@@ -61,10 +62,11 @@ class Callmanager: NSObject {
                     } else {
                         sipProxy = proxy
                     }
-
+                    isOutboundProxy = true
                 } else {
                     // domain
                     sipProxy = domain
+                    isOutboundProxy = false
                 }
             }
 
@@ -81,6 +83,12 @@ class Callmanager: NSObject {
             let address = try Factory.Instance.createAddress(addr: String("sip:" + serverAddress))
             try address.setTransport(newValue: transport)
             try accountParams.setServeraddress(newValue: address)
+            
+            /// route Address
+            if (isOutboundProxy) {
+                try accountParams.setRoutesaddresses(newValue: [address])
+            }
+            
 
             accountParams.registerEnabled = true
             // Enable push notifications on this account
