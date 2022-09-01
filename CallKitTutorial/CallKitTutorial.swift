@@ -163,9 +163,11 @@ class CallKitExampleContext: ObservableObject {
             // Call has been terminated by any side
 
             // Report to CallKit that the call is over, if the terminate action was initiated by other end of the call
-            if isCallRunning {
+//            if isCallRunning {
                 mProviderDelegate.stopCall()
-            }
+//            } else {
+//
+//            }
             remoteAddress = "Nobody yet"
         }
     }
@@ -238,6 +240,8 @@ class CallKitExampleContext: ObservableObject {
             } else {
                 encrypt = .None
             }
+//            mProviderDelegate.startCall(remoteAddress: <#T##Address#>)
+            Callmanager.instance().mProviderDelegate = mProviderDelegate
             Callmanager.instance().outingCall(address: callAddress, encryption: encrypt)
         }
     }

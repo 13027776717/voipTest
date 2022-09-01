@@ -54,6 +54,26 @@ class CallKitProviderDelegate : NSObject
 		mCallController.request(transaction, completion: { error in }) // Report to CallKit a call must end
 	}
     
+    func startCall (remoteAddress:Address){
+        let uuid = UUID()
+        incomingCallUUID = uuid
+        let handle = CXHandle(type: .generic, value: remoteAddress.asStringUriOnly())
+        let startCallAction = CXStartCallAction(call: uuid, handle: handle)
+        let transaction = CXTransaction(action: startCallAction)
+       
+        requestTransaction(transaction, action: "startCall")
+    }
+    
+    func requestTransaction(_ transaction: CXTransaction, action: String) {
+        mCallController.request(transaction) { error in
+            if let error = error {
+                
+            } else {
+                
+            }
+        }
+    }
+    
 }
 
 

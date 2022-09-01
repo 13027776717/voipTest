@@ -177,7 +177,14 @@ class Callmanager: NSObject {
                 else if transportType == "TCP" { transport = TransportType.Tcp }
                 else { transport = TransportType.Udp }
 
-                try remoteAddress.setTransport(newValue: transport)
+                
+                if callKitEnabled() {
+                    
+                    mProviderDelegate.startCall(remoteAddress: remoteAddress)
+                } else {
+                    try remoteAddress.setTransport(newValue: transport)
+                }
+                
             }
 
             // Finally we start the call
@@ -245,4 +252,18 @@ class Callmanager: NSObject {
         }
         return nil
     }
+    
+    func callKitEnabled() -> Bool {
+        
+        #if !targetEnvironment(simulator)
+            
+            return true
+           
+        #endif
+        
+        return false
+
+    }
+    
+    
 }
