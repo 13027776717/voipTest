@@ -30,7 +30,7 @@ class Callmanager: NSObject {
     func register(dic: NSDictionary) {
         let username: String = dic["username"] as! String
         let passwd: String = dic["passwd"] as! String
-        let expires:String = dic["expires"] as!String
+        let expires: String = dic["expires"] as! String
         let domain: String = dic["domain"] as! String
         let proxy: String = dic["proxy"] as! String
         let transportType: String = dic["transportType"] as! String
@@ -85,12 +85,11 @@ class Callmanager: NSObject {
             let address = try Factory.Instance.createAddress(addr: String("sip:" + serverAddress))
             try address.setTransport(newValue: transport)
             try accountParams.setServeraddress(newValue: address)
-            
+
             /// route Address
-            if (isOutboundProxy) {
+            if isOutboundProxy {
                 try accountParams.setRoutesaddresses(newValue: [address])
             }
-            
 
             accountParams.registerEnabled = true
             // Enable push notifications on this account
@@ -105,29 +104,39 @@ class Callmanager: NSObject {
 //                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
                 mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             }
-            
-            ///contact add expires
+
+            /// contact add expires
             accountParams.contactParameters = "expires=\(expires)"
             
+            ///contactUriParameters
+            //accountParams.contactUriParameters = "119.28.64.168"
+
+            
             /// nat
-            ///
-            ///stun:stun1.l.google.com:19302
+            /// stun:stun1.l.google.com:19302
             if isStun {
-                let natPolicy = accountParams.natPolicy
+                var natPolicy = accountParams.natPolicy
+                if natPolicy == nil {
+                    natPolicy = try mCore.createNatPolicy()
+                }
+
+                natPolicy?.stunEnabled = true
                 natPolicy?.turnEnabled = true
                 natPolicy?.iceEnabled = true
                 natPolicy?.stunServer = stunServer
-                natPolicy?.tlsTurnTransportEnabled = true
+
                 natPolicy?.upnpEnabled = true
                 natPolicy?.tcpTurnTransportEnabled = true
-                
+                natPolicy?.tlsTurnTransportEnabled = true
+                natPolicy?.udpTurnTransportEnabled = true
+
                 accountParams.natPolicy = natPolicy
             }
-            
+
             /// verifyServerCertificate
 //            mCore.verifyServerCertificates(yesno: false)
             mCore.addAuthInfo(info: authInfo)
-            
+
             try mCore.addAccount(account: mAccount!)
             mCore.defaultAccount = mAccount
 
@@ -136,11 +145,13 @@ class Callmanager: NSObject {
 
     func unregister() {
         if let account = mCore.defaultAccount {
+            
             let params = account.params
             let clonedParams = params?.clone()
             clonedParams?.registerEnabled = false
-//            clonedParams?.expires = 0
             account.params = clonedParams
+            
+        
         }
     }
 
@@ -197,14 +208,11 @@ class Callmanager: NSObject {
                 else if transportType == "TCP" { transport = TransportType.Tcp }
                 else { transport = TransportType.Udp }
 
-                
                 if callKitEnabled() {
-                    
                     mProviderDelegate.startCall(remoteAddress: remoteAddress)
                 } else {
                     try remoteAddress.setTransport(newValue: transport)
                 }
-                
             }
 
             // Finally we start the call
@@ -272,18 +280,14 @@ class Callmanager: NSObject {
         }
         return nil
     }
-    
-    func callKitEnabled() -> Bool {
-        
-        #if !targetEnvironment(simulator)
-            
-            return true
-           
-        #endif
-        
-        return false
 
+    func callKitEnabled() -> Bool {
+        #if !targetEnvironment(simulator)
+
+            return true
+
+        #endif
+
+        return false
     }
-    
-    
 }

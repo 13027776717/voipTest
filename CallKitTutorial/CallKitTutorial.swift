@@ -15,11 +15,8 @@ import linphonesw
 #endif
 
 class CallKitExampleContext: ObservableObject {
-    var mCore: Core!
     @Published var coreVersion: String = Core.getVersion
 
-    var mAccount: Account?
-    var mCoreDelegate: CoreDelegate!
     @Published var username: String = "3333"
     @Published var passwd: String = "7cU3rjjJjb4EXqwFqTHBvLzAjy7A3s"
     @Published var domain: String = "comms.kelare-demo.com" /// 119.28.64.168
@@ -46,28 +43,28 @@ class CallKitExampleContext: ObservableObject {
     @Published var expires = "3600"
     @Published var stunServer = "stun:stun1.l.google.com:19302"
     @Published var isStun = false
-    
+
     /*
-stun:stun1.l.google.com:19302
-stun:stun2.l.google.com:19302
-stun:stun3.l.google.com:19302
-stun:stun4.l.google.com:19302
-stun:23.21.150.121
-stun:stun01.sipphone.com
-stun:stun.ekiga.net
-stun:stun.fwdnet.net
-stun:stun.ideasip.com
-stun:stun.iptel.org
-stun:stun.rixtelecom.se
-stun:stun.schlund.de
-stun:stunserver.org
-stun:stun.softjoys.com
-stun:stun.voiparound.com
-stun:stun.voipbuster.com
-stun:stun.voipstunt.com
-stun:stun.voxgratia.org
-stun:stun.xten.com
-     */
+     stun:stun1.l.google.com:19302
+     stun:stun2.l.google.com:19302
+     stun:stun3.l.google.com:19302
+     stun:stun4.l.google.com:19302
+     stun:23.21.150.121
+     stun:stun01.sipphone.com
+     stun:stun.ekiga.net
+     stun:stun.fwdnet.net
+     stun:stun.ideasip.com
+     stun:stun.iptel.org
+     stun:stun.rixtelecom.se
+     stun:stun.schlund.de
+     stun:stunserver.org
+     stun:stun.softjoys.com
+     stun:stun.voiparound.com
+     stun:stun.voipbuster.com
+     stun:stun.voipstunt.com
+     stun:stun.voxgratia.org
+     stun:stun.xten.com
+          */
 
     /*------------ Callkit tutorial related variables ---------------*/
     let incomingCallName = "Incoming call"
@@ -195,7 +192,7 @@ stun:stun.xten.com
 
             // Report to CallKit that the call is over, if the terminate action was initiated by other end of the call
 //            if isCallRunning {
-                mProviderDelegate.stopCall()
+            mProviderDelegate.stopCall()
 //            } else {
 //
 //            }
@@ -232,9 +229,9 @@ stun:stun.xten.com
             "pushProxy": pushProxy,
             "identity": identityString,
             "server": serveString,
-            "expires":expires,
-            "stunServer":stunServer,
-            "isStun":String(isStun),
+            "expires": expires,
+            "stunServer": stunServer,
+            "isStun": String(isStun),
         ]
         UserDefaults.standard.setValue(dic, forKey: userDefaultStr)
         UserDefaults.standard.synchronize()
@@ -284,6 +281,9 @@ stun:stun.xten.com
         UserDefaults.standard.synchronize()
 
         print("handlerChange tag: \(tag)")
+    }
+
+    func test() {
     }
 }
 
