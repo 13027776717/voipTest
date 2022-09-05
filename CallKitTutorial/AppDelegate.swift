@@ -139,12 +139,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 let user = userDefault as! Dictionary<String, String>
                 let username = user["username"]!
                 let passwd = user["passwd"]!
+                let expires = user["expires"]
                 let domain = user["domain"]!
                 let transportType = user["transportType"]!
                 let proxy = user["proxy"]!
                 let pushProxy = user["pushProxy"]!
                 let identity = user["identity"]!
                 let server = user["server"]!
+                let stunServer = user["stunServer"]!
+                let isStun = user["isStun"]!
 
                 let dic = [
                     "username": username,
@@ -155,6 +158,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     "pushProxy": pushProxy,
                     "identity": identity,
                     "server": server,
+                    "expires":expires,
+                    "stunServer":stunServer,
+                    "isStun":isStun,
                 ]
 
                 Callmanager.instance().register(dic: dic as NSDictionary)

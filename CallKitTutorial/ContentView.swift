@@ -42,27 +42,49 @@ struct ContentView: View {
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .disabled(tutorialContext.loggedIn)
                     }
-                    HStack {
-                        Text("Domain:")
-                            .font(.title3)
-                        TextField("", text: $tutorialContext.domain)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .disabled(tutorialContext.loggedIn)
+                    Group {
+                        HStack {
+                            Text("Stun:")
+                                .font(.title3)
+                            TextField("", text: $tutorialContext.stunServer)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .disabled(tutorialContext.loggedIn)
+                        }
+                        HStack {
+                            Toggle(isOn:$tutorialContext.isStun) {
+                                Text("Use Stun:")
+                            }.disabled(tutorialContext.loggedIn)
+                        }
+                        HStack {
+                            Text("Expires:")
+                                .font(.title3)
+                            TextField("", text: $tutorialContext.expires)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .disabled(tutorialContext.loggedIn)
+                        }
+                        HStack {
+                            Text("Domain:")
+                                .font(.title3)
+                            TextField("", text: $tutorialContext.domain)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .disabled(tutorialContext.loggedIn)
+                        }
+                        HStack {
+                            Text("Prxoy:")
+                                .font(.title3)
+                            TextField("", text: $tutorialContext.proxy)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .disabled(tutorialContext.loggedIn)
+                        }
+                        HStack {
+                            Text("PushPrxoy:")
+                                .font(.title3)
+                            TextField("", text: $tutorialContext.pushProxy)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .disabled(tutorialContext.loggedIn)
+                        }
                     }
-                    HStack {
-                        Text("Prxoy:")
-                            .font(.title3)
-                        TextField("", text: $tutorialContext.proxy)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .disabled(tutorialContext.loggedIn)
-                    }
-                    HStack {
-                        Text("PushPrxoy:")
-                            .font(.title3)
-                        TextField("", text: $tutorialContext.pushProxy)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .disabled(tutorialContext.loggedIn)
-                    }
+                    
                     Picker(selection: $tutorialContext.transportType, label: Text("Transport:")) {
                         Text("TLS").tag("TLS")
                         Text("TCP").tag("TCP")

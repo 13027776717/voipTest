@@ -30,6 +30,7 @@ class Callmanager: NSObject {
     func register(dic: NSDictionary) {
         let username: String = dic["username"] as! String
         let passwd: String = dic["passwd"] as! String
+        let expires:String = dic["expires"] as!String
         let domain: String = dic["domain"] as! String
         let proxy: String = dic["proxy"] as! String
         let transportType: String = dic["transportType"] as! String
@@ -38,7 +39,8 @@ class Callmanager: NSObject {
         var sipProxy = ""
         let identityAddress = dic["identity"] as! String
         let serverAddress = dic["server"] as! String
-
+        let stunServer = dic["stunServer"] as! String
+        let isStun = Bool(dic["isStun"] as! String)!
         do {
             mCore.verifyServerCertificates(yesno: false)
             var transport: TransportType
@@ -103,11 +105,29 @@ class Callmanager: NSObject {
 //                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
                 mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
             }
+            
+            ///contact add expires
+            accountParams.contactParameters = "expires=\(expires)"
+            
+            /// nat
+            ///
+            ///stun:stun1.l.google.com:19302
+            if isStun {
+                let natPolicy = accountParams.natPolicy
+                natPolicy?.turnEnabled = true
+                natPolicy?.iceEnabled = true
+                natPolicy?.stunServer = stunServer
+                natPolicy?.tlsTurnTransportEnabled = true
+                natPolicy?.upnpEnabled = true
+                natPolicy?.tcpTurnTransportEnabled = true
+                
+                accountParams.natPolicy = natPolicy
+            }
+            
             /// verifyServerCertificate
 //            mCore.verifyServerCertificates(yesno: false)
             mCore.addAuthInfo(info: authInfo)
-            ///contact add expires
-            accountParams.contactParameters = "expires=3600"
+            
             try mCore.addAccount(account: mAccount!)
             mCore.defaultAccount = mAccount
 
