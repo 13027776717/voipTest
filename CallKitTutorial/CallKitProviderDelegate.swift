@@ -47,6 +47,9 @@ class CallKitProviderDelegate : NSObject
 	
 	func stopCall()
 	{
+        if (incomingCallUUID == nil) {
+            return
+        }
         
 		let endCallAction = CXEndCallAction(call: incomingCallUUID)
 		let transaction = CXTransaction(action: endCallAction)

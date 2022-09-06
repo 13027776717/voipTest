@@ -107,6 +107,8 @@ class Callmanager: NSObject {
 
             /// contact add expires
             accountParams.contactParameters = "expires=\(expires)"
+            /// expires
+            accountParams.expires = Int(expires) ?? 3600
             
             ///contactUriParameters
             //accountParams.contactUriParameters = "119.28.64.168"
@@ -149,6 +151,7 @@ class Callmanager: NSObject {
             let params = account.params
             let clonedParams = params?.clone()
             clonedParams?.registerEnabled = false
+//            clonedParams?.expires = 0
             account.params = clonedParams
             
         

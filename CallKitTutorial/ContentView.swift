@@ -166,17 +166,29 @@ struct ContentView: View {
                                 Spacer()
                             }.padding(.top, 1)
                         }.padding(.top, 1)
-                        Button(action: { if self.tutorialContext.isCallRunning {
-                            tutorialContext.mProviderDelegate.stopCall()
-                        } else {
-                            Callmanager.instance().terminateCall()
-                        }}) {
-                            Text("End call").font(.title2)
-                                .foregroundColor(Color.white)
-                                .frame(width: 120.0, height: 25.0)
-                                .background(Color.gray)
+                        Group {
+                            HStack {
+                            Button(action: { if self.tutorialContext.isCallRunning {
+                                tutorialContext.mProviderDelegate.stopCall()
+                            } else {
+                                Callmanager.instance().terminateCall()
+                            }}) {
+                                Text("End call").font(.title2)
+                                    .foregroundColor(Color.white)
+                                    .frame(width: 120.0, height: 25.0)
+                                    .background(Color.gray)
+                            }
+                            
+                                Button(action: tutorialContext.acceptCall) {
+                                Text("Accept call").font(.title2)
+                                    .foregroundColor(Color.white)
+                                    .frame(width: 120.0, height: 25.0)
+                                    .background(Color.gray)
+                            }
+                            }
+                            
                         }
-                        .padding(.top, 5)
+                        
 
                         HStack {
                             Text("CallAddress:")

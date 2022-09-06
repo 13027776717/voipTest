@@ -275,6 +275,15 @@ class CallKitExampleContext: ObservableObject {
             Callmanager.instance().outingCall(address: callAddress, encryption: encrypt)
         }
     }
+    
+    func acceptCall (){
+        do {
+            // if we wanted, we could create a CallParams object
+            // and answer using this object to make changes to the call configuration
+            // (see OutgoingCall tutorial)
+            try Callmanager.instance().mCore.currentCall?.accept()
+        } catch { NSLog(error.localizedDescription) }
+    }
 
     func handlerChange(_ tag: Int) {
         UserDefaults.standard.setValue(tag, forKey: handleNotificationType)
