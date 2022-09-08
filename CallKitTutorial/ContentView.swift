@@ -13,6 +13,7 @@ struct ContentView: View {
     @ObservedObject var tutorialContext: CallKitExampleContext
     @State var showIDSheet = false
     @State var showServeSheet = false
+    @State var showPushRegion = false
 
     func callStateString() -> String {
         if tutorialContext.isCallRunning {
@@ -51,7 +52,7 @@ struct ContentView: View {
                                 .disabled(tutorialContext.loggedIn)
                         }
                         HStack {
-                            Toggle(isOn:$tutorialContext.isStun) {
+                            Toggle(isOn: $tutorialContext.isStun) {
                                 Text("Use Stun:")
                             }.disabled(tutorialContext.loggedIn)
                         }
@@ -79,12 +80,21 @@ struct ContentView: View {
                         HStack {
                             Text("PushPrxoy:")
                                 .font(.title3)
-                            TextField("", text: $tutorialContext.pushProxy)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            Button(action: {
+//                                if (tutorialContext.pushRegionArray.count > 0) {
+                                self.showPushRegion = true
+//                                }
+
+                            }) {
+                                Text(tutorialContext.pushProxy)
+                            }.actionSheet(isPresented: $showPushRegion, content: { pushRegionSheet })
                                 .disabled(tutorialContext.loggedIn)
+//                            TextField("", text: $tutorialContext.pushProxy)
+//                                .textFieldStyle(RoundedBorderTextFieldStyle())
+//                                .disabled(tutorialContext.loggedIn)
                         }
                     }
-                    
+
                     Picker(selection: $tutorialContext.transportType, label: Text("Transport:")) {
                         Text("TLS").tag("TLS")
                         Text("TCP").tag("TCP")
@@ -168,27 +178,25 @@ struct ContentView: View {
                         }.padding(.top, 1)
                         Group {
                             HStack {
-                            Button(action: { if self.tutorialContext.isCallRunning {
-                                tutorialContext.mProviderDelegate.stopCall()
-                            } else {
-                                Callmanager.instance().terminateCall()
-                            }}) {
-                                Text("End call").font(.title2)
-                                    .foregroundColor(Color.white)
-                                    .frame(width: 120.0, height: 25.0)
-                                    .background(Color.gray)
-                            }
-                            
+                                Button(action: { if self.tutorialContext.isCallRunning {
+                                    tutorialContext.mProviderDelegate.stopCall()
+                                } else {
+                                    Callmanager.instance().terminateCall()
+                                }}) {
+                                    Text("End call").font(.title2)
+                                        .foregroundColor(Color.white)
+                                        .frame(width: 120.0, height: 25.0)
+                                        .background(Color.gray)
+                                }
+
                                 Button(action: tutorialContext.acceptCall) {
-                                Text("Accept call").font(.title2)
-                                    .foregroundColor(Color.white)
-                                    .frame(width: 120.0, height: 25.0)
-                                    .background(Color.gray)
+                                    Text("Accept call").font(.title2)
+                                        .foregroundColor(Color.white)
+                                        .frame(width: 120.0, height: 25.0)
+                                        .background(Color.gray)
+                                }
                             }
-                            }
-                            
                         }
-                        
 
                         HStack {
                             Text("CallAddress:")
@@ -269,6 +277,26 @@ struct ContentView: View {
                                      print("Cancel")
                                      self.showServeSheet = false
                                  })])
+        return action
+    }
+
+    private var pushRegionSheet: ActionSheet {
+        let buttons: [ActionSheet.Button] = tutorialContext.pushRegionArray.enumerated().map { _, option in
+
+            let dic = option as! NSDictionary
+//            let name = dic["name"] as! String
+            let address = dic["address"] as! String
+
+            return ActionSheet.Button.default(Text(address), action: {
+                tutorialContext.pushProxy = address
+                self.showServeSheet = false
+            })
+        }
+
+        let action = ActionSheet(title: Text("Select PushRegion"),
+                                 message: Text(""),
+                                 buttons: buttons + [ActionSheet.Button.cancel()]
+        )
         return action
     }
 }

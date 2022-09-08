@@ -9,7 +9,8 @@ def basic_pods
 		else
 		pod 'linphone-sdk', :path => ENV['PODFILE_PATH']  # local sdk
 	end
-	
+  
+  pod 'Alamofire'
 end
 
 

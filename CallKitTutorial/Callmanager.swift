@@ -151,10 +151,7 @@ class Callmanager: NSObject {
             let params = account.params
             let clonedParams = params?.clone()
             clonedParams?.registerEnabled = false
-//            clonedParams?.expires = 0
             account.params = clonedParams
-            
-        
         }
     }
 
@@ -210,11 +207,10 @@ class Callmanager: NSObject {
                 if transportType == "TLS" { transport = TransportType.Tls }
                 else if transportType == "TCP" { transport = TransportType.Tcp }
                 else { transport = TransportType.Udp }
+                try remoteAddress.setTransport(newValue: transport)
 
                 if callKitEnabled() {
                     mProviderDelegate.startCall(remoteAddress: remoteAddress)
-                } else {
-                    try remoteAddress.setTransport(newValue: transport)
                 }
             }
 

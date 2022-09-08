@@ -6,6 +6,7 @@
 //  Copyright © 2020 BelledonneCommunications. All rights reserved.
 //
 
+import Alamofire
 import AVFoundation
 import linphonesw
 
@@ -43,6 +44,8 @@ class CallKitExampleContext: ObservableObject {
     @Published var expires = "3600"
     @Published var stunServer = "stun:stun1.l.google.com:19302"
     @Published var isStun = false
+
+    var pushRegionArray: NSArray = []
 
     /*
      stun:stun1.l.google.com:19302
@@ -137,7 +140,10 @@ class CallKitExampleContext: ObservableObject {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(call(notification:)),
                                                name: notificationCall, object: nil)
+        getPushRegion()
     }
+
+    // MARK: - notification -
 
     @objc func register(notification: Notification) {
         let userInfo = notification.userInfo as! [String: AnyObject]
@@ -199,6 +205,8 @@ class CallKitExampleContext: ObservableObject {
             remoteAddress = "Nobody yet"
         }
     }
+
+    // MARK: - action -
 
     func login() {
         isComeFromVoip = false
@@ -275,8 +283,8 @@ class CallKitExampleContext: ObservableObject {
             Callmanager.instance().outingCall(address: callAddress, encryption: encrypt)
         }
     }
-    
-    func acceptCall (){
+
+    func acceptCall() {
         do {
             // if we wanted, we could create a CallParams object
             // and answer using this object to make changes to the call configuration
@@ -292,8 +300,42 @@ class CallKitExampleContext: ObservableObject {
         print("handlerChange tag: \(tag)")
     }
 
-    func test() {
+    // MARK: - network -
+
+    func getPushRegion() {
+        AF.request("https://regions.turtle.solutions:1997/api/stg/regions", method: .get, parameters: ["sort_by": "closest"]).responseJSON { response in
+
+            switch response.result {
+            case .success:
+                let dic = response.value as! NSDictionary
+                let array = dic.value(forKey: "data") as! NSArray
+                if array.count > 0 {
+                    self.pushRegionArray = array
+                    UserDefaults.standard.setValue(array, forKey: "pushRegion")
+                    UserDefaults.standard.synchronize()
+                }
+
+                print("Validation Successful")
+            case let .failure(error):
+                print(error)
+            }
+        }
     }
+
+    /*
+     {
+     "name":"us-region-1",
+     "city":"Ashburn",
+     "region":"Virginia",
+     "country":"America",
+     "countryCode":"us",
+     "address":"proxy.justrandoms.com",
+     "ipAddress":"54.144.43.24",
+     "location":{"lat":"39.0437","long":"-77.4875"},
+     "timezone":"",
+     "transportCapabilites":["udp","tcp","tls","webrtc"],
+     "certificate":"public"}
+     */
 }
 
 extension String {
