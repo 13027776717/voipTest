@@ -107,10 +107,10 @@ class CallKitExampleContext: ObservableObject {
         } else {
             username = "1006"
             passwd = "P@55word1!"
-            domain = "sip.justrandoms.com"
+            domain = "abc.justrandoms.com"
             transportType = "TLS"
-            proxy = ""
-            pushProxy = "proxy.justrandoms.com:5061"
+            proxy = "sip.justrandoms.com"
+            pushProxy = "proxy.justrandoms.com:5060"
             expires = "3600"
             stunServer = "stun:stun1.l.google.com:19302"
             isStun = true

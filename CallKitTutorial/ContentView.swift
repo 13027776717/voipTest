@@ -81,9 +81,9 @@ struct ContentView: View {
                             Text("PushPrxoy:")
                                 .font(.title3)
                             Button(action: {
-//                                if (tutorialContext.pushRegionArray.count > 0) {
+
                                 self.showPushRegion = true
-//                                }
+
 
                             }) {
                                 Text(tutorialContext.pushProxy)

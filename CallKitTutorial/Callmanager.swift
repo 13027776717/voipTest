@@ -103,10 +103,15 @@ class Callmanager: NSObject {
             if isHeader {
 //                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
                 mAccount?.setCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
+                
+                accountParams.contactParameters = "x-outbound-proxy=\(proxy);expires=\(expires)"
+                
+            }else {
+                /// contact add expires
+                accountParams.contactParameters = "expires=\(expires)"
             }
 
-            /// contact add expires
-            accountParams.contactParameters = "expires=\(expires)"
+            
             /// expires
             accountParams.expires = Int(expires) ?? 3600
             
@@ -197,10 +202,11 @@ class Callmanager: NSObject {
                 let pushProxy: String = user["pushProxy"]!
 
                 if proxy != "" && pushProxy != "" {
-//                    params.addCustomHeader(headerName: "x-domain", headerValue: user["domain"])
-                    params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
-                }
 
+                    params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
+                    
+                }
+               
                 /// dial  add transport
                 let transportType: String = user["transportType"]!
                 var transport: TransportType

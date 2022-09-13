@@ -1,39 +1,41 @@
 PODS:
   - Alamofire (5.6.2)
   - FLEX (4.7.0)
-  - linphone-sdk (5.0.71):
-    - linphone-sdk/all-frameworks (= 5.0.71)
-    - linphone-sdk/app-extension (= 5.0.71)
-    - linphone-sdk/app-extension-swift (= 5.0.71)
-    - linphone-sdk/basic-frameworks (= 5.0.71)
-    - linphone-sdk/swift (= 5.0.71)
-  - linphone-sdk/all-frameworks (5.0.71)
-  - linphone-sdk/app-extension (5.0.71)
-  - linphone-sdk/app-extension-swift (5.0.71):
+  - "linphone-sdk (5.2.0-alpha.23+33c2903)":
+    - "linphone-sdk/all-frameworks (= 5.2.0-alpha.23+33c2903)"
+    - "linphone-sdk/app-extension (= 5.2.0-alpha.23+33c2903)"
+    - "linphone-sdk/app-extension-swift (= 5.2.0-alpha.23+33c2903)"
+    - "linphone-sdk/basic-frameworks (= 5.2.0-alpha.23+33c2903)"
+    - "linphone-sdk/swift (= 5.2.0-alpha.23+33c2903)"
+  - "linphone-sdk/all-frameworks (5.2.0-alpha.23+33c2903)"
+  - "linphone-sdk/app-extension (5.2.0-alpha.23+33c2903)"
+  - "linphone-sdk/app-extension-swift (5.2.0-alpha.23+33c2903)":
     - linphone-sdk/app-extension
-  - linphone-sdk/basic-frameworks (5.0.71):
+  - "linphone-sdk/basic-frameworks (5.2.0-alpha.23+33c2903)":
     - linphone-sdk/app-extension
-  - linphone-sdk/swift (5.0.71):
+  - "linphone-sdk/swift (5.2.0-alpha.23+33c2903)":
     - linphone-sdk/app-extension-swift
     - linphone-sdk/basic-frameworks
 
 DEPENDENCIES:
   - Alamofire
   - FLEX
-  - linphone-sdk (~> 5.0.48)
+  - linphone-sdk (from `./linphone-sdk`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - FLEX
-  https://gitlab.linphone.org/BC/public/podspec.git:
-    - linphone-sdk
+
+EXTERNAL SOURCES:
+  linphone-sdk:
+    :path: "./linphone-sdk"
 
 SPEC CHECKSUMS:
   Alamofire: d368e1ff8a298e6dde360e35a3e68e6c610e7204
   FLEX: bdc9ac7d4a239e3d04c298c01221203257d63a80
-  linphone-sdk: 03dc37f2db70e06d919f7f65a738f45681f18eea
+  linphone-sdk: 0599c72ecc673682c4ffde725dd33660a287c8b9
 
-PODFILE CHECKSUM: 6e59abe75ce4ed6e046145831b1e2c041150232c
+PODFILE CHECKSUM: 313c57b9269994be5af559721f1d20c23ad339d4
 
 COCOAPODS: 1.11.3
