@@ -34,7 +34,7 @@ class Callmanager: NSObject {
         let domain: String = dic["domain"] as! String
         let proxy: String = dic["proxy"] as! String
         let transportType: String = dic["transportType"] as! String
-        let pushProxy = dic["pushProxy"] as! String
+        var pushProxy = dic["pushProxy"] as! String
         var domainAddress = ""
         var sipProxy = ""
         let identityAddress = dic["identity"] as! String
@@ -44,9 +44,27 @@ class Callmanager: NSObject {
         do {
             mCore.verifyServerCertificates(yesno: false)
             var transport: TransportType
-            if transportType == "TLS" { transport = TransportType.Tls }
-            else if transportType == "TCP" { transport = TransportType.Tcp }
-            else { transport = TransportType.Udp }
+            if transportType == "TLS" {
+                transport = TransportType.Tls
+                
+            } else if transportType == "TCP" {
+                transport = TransportType.Tcp
+                
+            } else {
+                transport = TransportType.Udp
+                
+            }
+            
+            if (pushProxy != "") {
+                if transportType == "TLS" {
+                    
+                    pushProxy = pushProxy + ":5061"
+                } else {
+                    
+                    pushProxy = pushProxy + ":5060"
+                }
+                
+            }
 
             var isHeader = false
             var isOutboundProxy = false
@@ -71,6 +89,8 @@ class Callmanager: NSObject {
                     isOutboundProxy = false
                 }
             }
+            
+            
 
             let authInfo = try Factory.Instance.createAuthInfo(username: username, userid: "", passwd: passwd, ha1: "", realm: "", domain: domain)
 
