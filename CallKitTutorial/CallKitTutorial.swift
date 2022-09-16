@@ -42,7 +42,7 @@ class CallKitExampleContext: ObservableObject {
 
     @Published var handlerPushType = 0
     @Published var expires = "3600"
-    @Published var stunServer = "stun:stun1.l.google.com:19302"
+    @Published var stunServer = "stun:turn.matrix.org"
     @Published var isStun = false
 
     var pushRegionArray: NSArray = []
@@ -112,7 +112,7 @@ class CallKitExampleContext: ObservableObject {
             proxy = "sip.justrandoms.com"
             pushProxy = "proxy.justrandoms.com:5060"
             expires = "3600"
-            stunServer = "stun:stun1.l.google.com:19302"
+            stunServer = "stun:turn.matrix.org"
             isStun = true
         }
 
@@ -247,6 +247,7 @@ class CallKitExampleContext: ObservableObject {
     }
 
     func unregister() {
+        loggedIn = false
         Callmanager.instance().isLogin = false
         Callmanager.instance().unregister()
     }

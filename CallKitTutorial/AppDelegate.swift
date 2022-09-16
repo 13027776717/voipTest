@@ -11,6 +11,7 @@ import PushKit
 import SwiftUI
 import UIKit
 
+//voip.com.commlink.test
 let userDefaultStr: String = "voipTest"
 let backGround: String = "backGround"
 let handleNotificationType = "handleNotificationType"
@@ -100,6 +101,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        UIApplication.shared.applicationIconBadgeNumber = 0
         var handlerPushType = 0
         let handleType = UserDefaults.standard.value(forKey: handleNotificationType)
 
