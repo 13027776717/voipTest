@@ -93,6 +93,12 @@ struct ContentView: View {
 //                                .textFieldStyle(RoundedBorderTextFieldStyle())
 //                                .disabled(tutorialContext.loggedIn)
                         }
+                        
+                        HStack {
+                            Toggle(isOn: $tutorialContext.isPushProxy) {
+                                Text("Use Push Proxy:")
+                            }.disabled(tutorialContext.loggedIn)
+                        }
                     }
 
                     Picker(selection: $tutorialContext.transportType, label: Text("Transport:")) {

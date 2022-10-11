@@ -41,6 +41,8 @@ class Callmanager: NSObject {
         let serverAddress = dic["server"] as! String
         let stunServer = dic["stunServer"] as! String
         let isStun = Bool(dic["isStun"] as! String)!
+        let isPushProxy = Bool(dic["isPushProxy"] as! String)!
+        
         do {
             mCore.verifyServerCertificates(yesno: false)
             var transport: TransportType
@@ -110,15 +112,15 @@ class Callmanager: NSObject {
             if isOutboundProxy {
                 try accountParams.setRoutesaddresses(newValue: [address])
             }
-
+            
             accountParams.registerEnabled = true
             // Enable push notifications on this account
 //            accountParams.pushNotificationAllowed = true
             accountParams.remotePushNotificationAllowed = true
             // We're in a sandbox application, so we must set the provider to "apns.dev" since it will be "apns" by default, which is used only for production apps
             accountParams.pushNotificationConfig?.provider = "apns.dev"
+            
             mAccount = try mCore.createAccount(params: accountParams)
-
             // add CustomHeader
             if isHeader {
 //                mAccount?.setCustomHeader(headerName: "x-domain", headerValue: domain)
@@ -156,14 +158,32 @@ class Callmanager: NSObject {
                 natPolicy?.tcpTurnTransportEnabled = true
                 natPolicy?.tlsTurnTransportEnabled = true
                 natPolicy?.udpTurnTransportEnabled = true
-
+                
                 accountParams.natPolicy = natPolicy
             }
+            /// 如果使用推送代理 ，设置header
+            /// pn-pbx-domain
+            /// pn-pbx-out-proxy
+            /// pn-sbc-proxy
+            /// pn-topic :bundle id
+            /// pn-os-type:iOS
+            /// pn-from-type:apn
+            if isPushProxy {
+                let bundleIdentifier =  Bundle.main.bundleIdentifier
+                mAccount?.setCustomHeader(headerName: "pn-pbx-domain", headerValue: domain)
+                mAccount?.setCustomHeader(headerName: "pn-pbx-out-proxy", headerValue: proxy)
+                mAccount?.setCustomHeader(headerName: "pn-sbc-proxy", headerValue: pushProxy)
+                mAccount?.setCustomHeader(headerName: "pn-topic", headerValue: bundleIdentifier)
+                mAccount?.setCustomHeader(headerName: "pn-os-type", headerValue: "iOS")
+                mAccount?.setCustomHeader(headerName: "pn-from-type", headerValue: "apn")
+            }
 
+           
             /// verifyServerCertificate
 //            mCore.verifyServerCertificates(yesno: false)
             mCore.addAuthInfo(info: authInfo)
-
+            mCore.ipv6Enabled = true
+            mCore.useRfc2833ForDtmf = true
             try mCore.addAccount(account: mAccount!)
             mCore.defaultAccount = mAccount
 
@@ -196,27 +216,38 @@ class Callmanager: NSObject {
             if mAccount == nil {
                 mAccount = mCore.defaultAccount
             }
+            
 
             guard let remoteAddress = mAccount?.normalizeSipUri(username: address) else { return }
+//             try remoteAddress.setPort(newValue: 50160)
 
             // We also need a CallParams object
             // Create call params expects a Call object for incoming calls, but for outgoing we must use null safely
             let params = try mCore.createCallParams(call: nil)
-
+            
             // We can now configure it
             // Here we ask for no encryption but we could ask for ZRTP/SRTP/DTLS
 
             params.mediaEncryption = encryption
             // If we wanted to start the call with video directly
-            // params.videoEnabled = true
+             params.videoEnabled = true
             params.audioEnabled = true
-
+//            params.avpfEnabled = true
+//            params.capabilityNegotiationReinviteEnabled = true
+//            params.earlyMediaSendingEnabled = true
+//            params.rtpBundleEnabled = true
+ 
+            
             // add header
             let userDefault = UserDefaults.standard.value(forKey: userDefaultStr)
 
             if userDefault != nil {
                 let user = userDefault as! Dictionary<String, String>
-
+                
+                let isPushProxy = Bool(user["isPushProxy"]!)!
+                
+                let domain = user["domain"]!
+                
                 let proxy: String = user["proxy"]!
 
                 let pushProxy: String = user["pushProxy"]!
@@ -225,6 +256,16 @@ class Callmanager: NSObject {
 
                     params.addCustomHeader(headerName: "x-outbound-proxy", headerValue: proxy)
                     
+                }
+                
+                if isPushProxy {
+                    let bundleIdentifier =  Bundle.main.bundleIdentifier
+                    params.addCustomHeader(headerName: "pn-pbx-domain", headerValue: domain)
+                    params.addCustomHeader(headerName: "pn-pbx-out-proxy", headerValue: proxy)
+                    params.addCustomHeader(headerName: "pn-sbc-proxy", headerValue: pushProxy)
+                    params.addCustomHeader(headerName: "pn-topic", headerValue: bundleIdentifier)
+                    params.addCustomHeader(headerName: "pn-os-type", headerValue: "iOS")
+                    params.addCustomHeader(headerName: "pn-from-type", headerValue: "apn")
                 }
                
                 /// dial  add transport

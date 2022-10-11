@@ -51,6 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        stringifiedToken.append(String(":remote"))
         print("stringifiedToken == \(stringifiedToken.localizedLowercase)")
         Callmanager.instance().mCore.didRegisterForRemotePushWithStringifiedToken(deviceTokenStr: stringifiedToken)
+//        Callmanager.instance().mAccount?.core?.didRegisterForRemotePush(deviceToken: deviceToken)
         let userDefault = UserDefaults.standard
         userDefault.setValue(stringifiedToken, forKey: "pushToken")
         userDefault.synchronize()
@@ -159,6 +160,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 let server = user["server"]!
                 let stunServer = user["stunServer"]!
                 let isStun = user["isStun"]!
+                let isPushProxy = user["isPushProxy"]!
 
                 let dic = [
                     "username": username,
@@ -172,6 +174,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     "expires":expires,
                     "stunServer":stunServer,
                     "isStun":isStun,
+                    "isPushProxy":isPushProxy
                 ]
 
                 Callmanager.instance().register(dic: dic as NSDictionary)

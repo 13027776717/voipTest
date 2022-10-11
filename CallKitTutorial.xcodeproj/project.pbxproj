@@ -23,7 +23,7 @@
 		018936DA8FE1500B9E181610 /* Pods-CallKitTutorial.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CallKitTutorial.debug.xcconfig"; path = "Target Support Files/Pods-CallKitTutorial/Pods-CallKitTutorial.debug.xcconfig"; sourceTree = "<group>"; };
 		454830E9C41DBBF20AF2BD05 /* Pods_CallKitTutorial.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CallKitTutorial.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50473DC9286DB48F00712936 /* Callmanager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Callmanager.swift; sourceTree = "<group>"; };
-		6608A96224E197D5006E6C68 /* CallKitTutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CallKitTutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6608A96224E197D5006E6C68 /* voipTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = voipTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6608A96524E197D5006E6C68 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6608A96724E197D5006E6C68 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		6608A96924E197D5006E6C68 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -79,7 +79,7 @@
 		6608A96324E197D5006E6C68 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6608A96224E197D5006E6C68 /* CallKitTutorial.app */,
+				6608A96224E197D5006E6C68 /* voipTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -129,7 +129,7 @@
 			);
 			name = CallKitTutorial;
 			productName = CallKitTutorial;
-			productReference = 6608A96224E197D5006E6C68 /* CallKitTutorial.app */;
+			productReference = 6608A96224E197D5006E6C68 /* voipTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -380,10 +380,10 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = voip.com.commlink.test;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = voipTest;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -405,10 +405,10 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = voip.com.commlink.test;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = voipTest;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -42,9 +42,9 @@ class CallKitExampleContext: ObservableObject {
 
     @Published var handlerPushType = 0
     @Published var expires = "3600"
-    @Published var stunServer = "stun:turn.matrix.org"
+    @Published var stunServer = "stun.linphone.org"///stun.linphone.org
     @Published var isStun = false
-
+    @Published var isPushProxy = false
     var pushRegionArray: NSArray = []
 
     /*
@@ -104,6 +104,7 @@ class CallKitExampleContext: ObservableObject {
             expires = user["expires"]!
             stunServer = user["stunServer"]!
             isStun = Bool(user["isStun"]!)!
+            isPushProxy = Bool(user["isPushProxy"]!)!
         } else {
             username = "1006"
             passwd = "P@55word1!"
@@ -112,8 +113,14 @@ class CallKitExampleContext: ObservableObject {
             proxy = "sip.justrandoms.com"
             pushProxy = "proxy.justrandoms.com:5060"
             expires = "3600"
-            stunServer = "stun:turn.matrix.org"
+            stunServer = "stun:stun1.l.google.com:19302"
             isStun = true
+            isPushProxy = false
+//            username = "3333"
+//            passwd = "7cU3rjjJjb4EXqwFqTHBvLzAjy7A3s"
+//            domain = "comms.kelare-demo.com"
+//            transportType = "TLS"
+//            proxy = "comms-ext.kelare-demo.com"
         }
 
         if identityString == "" {
@@ -190,6 +197,8 @@ class CallKitExampleContext: ObservableObject {
                 #endif
             }
             remoteAddress = call.remoteAddress!.asStringUriOnly()
+        } else if state == .UpdatedByRemote {
+            try?call.deferUpdate()
         } else if state == .Connected {
             isCallIncoming = false
             isCallRunning = true
@@ -240,6 +249,7 @@ class CallKitExampleContext: ObservableObject {
             "expires": expires,
             "stunServer": stunServer,
             "isStun": String(isStun),
+            "isPushProxy": String(isPushProxy),
         ]
         UserDefaults.standard.setValue(dic, forKey: userDefaultStr)
         UserDefaults.standard.synchronize()
